@@ -56,14 +56,17 @@ class TopKConsensusPrecisionAgent:
             self.distance = "euclidean"
         self.eps = float(eps)
         self.scale = np.maximum(np.std(self.X, axis=0), self.eps)
-        self.retrieval_policy = os.environ.get("RETRIEVAL_POLICY", "fixed").strip().lower()
+        self.retrieval_policy = os.environ.get(
+            "RETRIEVAL_POLICY",
+            "adaptive_margin",
+        ).strip().lower()
         if self.retrieval_policy not in {"fixed", "adaptive_margin"}:
             self.retrieval_policy = "fixed"
         self.margin_threshold = max(_env_float("MARGIN_THRESHOLD", 0.03), 0.0)
         self.ratio_threshold = max(_env_float("RATIO_THRESHOLD", 1.08), 1.0)
         self.distance_threshold = max(_env_float("DISTANCE_THRESHOLD_RETRIEVAL", 0.95), 0.0)
         self.k_ambiguous = max(1, _env_int("ADAPTIVE_K_AMBIG", 16))
-        self.k_noisy = max(1, _env_int("ADAPTIVE_K_NOISY", 14))
+        self.k_noisy = max(1, _env_int("ADAPTIVE_K_NOISY", 16))
         self.temp_ambiguous = max(_env_float("ADAPTIVE_TEMP_AMBIG", 1.2), eps)
         self.temp_noisy = max(
             _env_float("ADAPTIVE_TEMP_NOISY", self.temp_ambiguous),

@@ -12,11 +12,13 @@ The adapter implements `Engine.predict_precision(corrupted_query)` and returns a
 
 The final adapter uses `adaptive_topk_spread`.
 
-- Corrupted retrieval queries use top-k consensus precision.
+- Corrupted retrieval queries use guarded adaptive-margin top-k precision.
+- Ambiguous or noisy retrieval queries use `k=16` and `temp=1.2`.
 - Near-clean attractor probes use precomputed Hessian spread-optimized precision.
 - A distance-based regime detector selects between those two paths.
-- Final top-k defaults are `k=12`, `temp=1.0`, `consensus_weight=0.45`, Euclidean distance.
-- Final clean-input threshold is `CLEAN_DISTANCE_THRESHOLD=0.20`.
+- `CLEAN_DISTANCE_THRESHOLD=0.30` protects anisotropy probes by routing near-clean inputs to the spread branch.
+
+Error analysis showed the hardest retrieval cases correlate with high noise and small nearest-neighbor margins. Guarded adaptive retrieval improves those cases while preserving the spread branch.
 
 ## Why This Is Principled
 
@@ -37,12 +39,12 @@ No official evaluator, model, harness, or data-generation files were modified.
 
 | Run | Mean Delta | Min Delta | Mean Spread | Min Spread | Extra Gates | Score |
 |---|---:|---:|---:|---:|---|---:|
-| Full `self_check.py` | `+0.057` | `+0.021` | `1.02x` | `1.01x` | none negative | `70.13 / 90` |
-| 20-seed stress | `+0.048` | `+0.005` | `1.02x` | `1.01x` | `0` negative-delta seeds, `0` spread failures | `66.98 / 90` |
+| Full `self_check.py` | `+0.064` | `+0.023` | `1.02x` | `1.01x` | retrieval `70 / 70` | `70.16 / 90` |
+| 20-seed stress | `+0.055` | `+0.011` | `1.02x` | `1.01x` | `0` negative-delta seeds, `0` spread failures | `70.15 / 90` |
 
 ## Rejected Experiments
 
-- `TOPK_K=16` improved retrieval but caused 3 spread failures, so `k=12` stayed final.
+- `TOPK_K=16` improved retrieval but caused 3 spread failures before the clean guard was strengthened.
 - Coordinate descent gave only a tiny anisotropy improvement and added too much runtime.
 - One-shot eigenvector scaling was anti-aligned with the official spread objective.
 - Kappa-subgradient slightly improved full self-check but failed the 20-seed spread gate.
@@ -68,15 +70,15 @@ PYTHONPYCACHEPREFIX=/private/tmp/anvil_pycache python3 self_check.py --adapter a
 PYTHONPYCACHEPREFIX=/private/tmp/anvil_pycache python3 run.py \
   --adapter adapters.myteam:Engine \
   --seeds 7 13 31 42 97 101 202 211 303 404 503 777 1009 1337 2027 2718 3141 4096 9001 9999 \
-  --out results/adaptive_20_seed_report.json
+  --out results/final_guarded_20_seed_report.json
 ```
 
 Report summarizer:
 
 ```bash
 PYTHONPYCACHEPREFIX=/private/tmp/anvil_pycache python3 scripts/summarize_report.py \
-  results/adaptive_20_seed_report.json \
-  --out results/adaptive_20_seed_summary.md
+  results/final_guarded_20_seed_report.json \
+  --out results/final_guarded_20_seed_summary.md
 ```
 
 ## Dependencies

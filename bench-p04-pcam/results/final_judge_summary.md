@@ -1,7 +1,6 @@
 # Final Judge Summary
 
 - Repository: https://github.com/nipun172006/anvil
-- Final code baseline commit: `676b372`
 - Official entrypoint: `adapters.myteam:Engine`
 - Final command:
 
@@ -13,15 +12,15 @@ PYTHONPYCACHEPREFIX=/private/tmp/anvil_pycache python3 self_check.py --adapter a
 
 | Run | Mean Delta | Min Delta | Mean Spread | Min Spread | Score / Gates |
 |---|---:|---:|---:|---:|---|
-| Full `self_check.py` | `+0.057` | `+0.021` | `1.02x` | `1.01x` | `70.13 / 90` |
-| 20-seed robustness | `+0.048` | `+0.005` | `1.02x` | `1.01x` | `66.98 / 90`, `0` negative seeds, `0` spread failures |
+| Full `self_check.py` | `+0.064` | `+0.023` | `1.02x` | `1.01x` | `70.16 / 90`, retrieval `70 / 70` |
+| 20-seed robustness | `+0.055` | `+0.011` | `1.02x` | `1.01x` | `70.15 / 90`, `0` negative seeds, `0` spread failures |
 
 ## Method
 
 - Use `adaptive_topk_spread` as the default precision controller.
-- Route corrupted retrieval queries to top-k consensus precision.
+- Route corrupted retrieval queries to guarded adaptive-margin top-k precision.
+- Use `k=16` and `temp=1.2` for ambiguous or noisy retrieval queries.
 - Route near-clean attractor probes to precomputed Hessian spread-optimized precision.
-- Detect the regime with distance to the nearest stored pattern.
-- Keep the frozen PCAM model unchanged and use precision only at inference time.
+- Use `CLEAN_DISTANCE_THRESHOLD=0.30` so anisotropy probes stay on the spread branch.
 
 No official evaluator, model, harness, or data-generation files were modified.
