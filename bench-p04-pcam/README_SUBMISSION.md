@@ -44,7 +44,7 @@ diag(sqrt(pi)) @ H @ diag(sqrt(pi))
 
 - At prediction time, select the precomputed precision for the nearest stored pattern.
 
-The regime detector uses squared Euclidean distance to the nearest stored pattern. Queries with distance `<= 0.20` use spread-optimized precision; other queries use top-k retrieval precision.
+The regime detector uses distance to the nearest stored pattern. Queries within the tuned clean-input threshold use spread-optimized precision; other queries use top-k retrieval precision.
 
 ## Why This Is Principled
 
@@ -85,9 +85,17 @@ Full official `self_check.py`:
 - Negative-delta seeds: `0`
 - Spread `<= 1.0x` seeds: `0`
 
+Rejected experiment:
+
+- `TOPK_K=16` improved retrieval on the 20-seed run, but had min spread `0.99x` and 3 spread-gate failures, so the final default remains `k=12`.
+
 ## Dependencies
 
 NumPy only.
+
+## Safety
+
+No official evaluator, model, harness, or data-generation files were modified. The submission changes are limited to the adapter, precision-agent utilities, scripts/results, and this submission note.
 
 ## Reproduction
 
