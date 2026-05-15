@@ -1,0 +1,273 @@
+{
+  "config": {
+    "K": 16,
+    "N": 64,
+    "noise_levels": [
+      0.5,
+      0.7,
+      0.8
+    ],
+    "n_per_level": 250,
+    "n_aniso": 16,
+    "seeds": [
+      7,
+      13,
+      31,
+      42,
+      97,
+      101,
+      202,
+      211,
+      303,
+      404,
+      503,
+      777,
+      1009,
+      1337,
+      2027,
+      2718,
+      3141,
+      4096,
+      9001,
+      9999
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 7,
+      "agent_accuracy": 0.7626666666666667,
+      "baseline_accuracy": 0.752,
+      "delta": 0.010666666666666713,
+      "spread_baseline": 12.2118,
+      "spread_agent": 11.9945,
+      "spread_reduction": 1.0181,
+      "duration_s": 38.18
+    },
+    {
+      "seed": 13,
+      "agent_accuracy": 0.8933333333333333,
+      "baseline_accuracy": 0.8693333333333333,
+      "delta": 0.02400000000000002,
+      "spread_baseline": 12.1063,
+      "spread_agent": 12.0834,
+      "spread_reduction": 1.0019,
+      "duration_s": 32.64
+    },
+    {
+      "seed": 31,
+      "agent_accuracy": 0.828,
+      "baseline_accuracy": 0.7693333333333333,
+      "delta": 0.058666666666666645,
+      "spread_baseline": 12.2617,
+      "spread_agent": 12.0715,
+      "spread_reduction": 1.0158,
+      "duration_s": 39.13
+    },
+    {
+      "seed": 42,
+      "agent_accuracy": 0.896,
+      "baseline_accuracy": 0.8733333333333333,
+      "delta": 0.022666666666666724,
+      "spread_baseline": 12.1652,
+      "spread_agent": 12.0137,
+      "spread_reduction": 1.0126,
+      "duration_s": 32.21
+    },
+    {
+      "seed": 97,
+      "agent_accuracy": 0.8493333333333334,
+      "baseline_accuracy": 0.8293333333333334,
+      "delta": 0.020000000000000018,
+      "spread_baseline": 12.5555,
+      "spread_agent": 12.1791,
+      "spread_reduction": 1.0309,
+      "duration_s": 34.23
+    },
+    {
+      "seed": 101,
+      "agent_accuracy": 0.8453333333333334,
+      "baseline_accuracy": 0.788,
+      "delta": 0.05733333333333335,
+      "spread_baseline": 12.3149,
+      "spread_agent": 12.0846,
+      "spread_reduction": 1.0191,
+      "duration_s": 37.29
+    },
+    {
+      "seed": 202,
+      "agent_accuracy": 0.82,
+      "baseline_accuracy": 0.7013333333333334,
+      "delta": 0.11866666666666659,
+      "spread_baseline": 12.2653,
+      "spread_agent": 12.0318,
+      "spread_reduction": 1.0194,
+      "duration_s": 41.53
+    },
+    {
+      "seed": 211,
+      "agent_accuracy": 0.8973333333333333,
+      "baseline_accuracy": 0.8613333333333333,
+      "delta": 0.03600000000000003,
+      "spread_baseline": 12.4421,
+      "spread_agent": 12.4426,
+      "spread_reduction": 1.0,
+      "duration_s": 35.51
+    },
+    {
+      "seed": 303,
+      "agent_accuracy": 0.8186666666666667,
+      "baseline_accuracy": 0.7946666666666666,
+      "delta": 0.02400000000000002,
+      "spread_baseline": 12.3043,
+      "spread_agent": 12.0756,
+      "spread_reduction": 1.0189,
+      "duration_s": 38.35
+    },
+    {
+      "seed": 404,
+      "agent_accuracy": 0.804,
+      "baseline_accuracy": 0.7173333333333334,
+      "delta": 0.08666666666666667,
+      "spread_baseline": 12.4008,
+      "spread_agent": 12.3046,
+      "spread_reduction": 1.0078,
+      "duration_s": 37.51
+    },
+    {
+      "seed": 503,
+      "agent_accuracy": 0.8906666666666667,
+      "baseline_accuracy": 0.8706666666666667,
+      "delta": 0.020000000000000018,
+      "spread_baseline": 12.3034,
+      "spread_agent": 12.1418,
+      "spread_reduction": 1.0133,
+      "duration_s": 33.92
+    },
+    {
+      "seed": 777,
+      "agent_accuracy": 0.9026666666666666,
+      "baseline_accuracy": 0.8493333333333334,
+      "delta": 0.05333333333333323,
+      "spread_baseline": 12.1889,
+      "spread_agent": 12.0869,
+      "spread_reduction": 1.0084,
+      "duration_s": 36.52
+    },
+    {
+      "seed": 1009,
+      "agent_accuracy": 0.8573333333333333,
+      "baseline_accuracy": 0.82,
+      "delta": 0.03733333333333333,
+      "spread_baseline": 12.4859,
+      "spread_agent": 12.3869,
+      "spread_reduction": 1.008,
+      "duration_s": 36.34
+    },
+    {
+      "seed": 1337,
+      "agent_accuracy": 0.82,
+      "baseline_accuracy": 0.7853333333333333,
+      "delta": 0.03466666666666662,
+      "spread_baseline": 12.0943,
+      "spread_agent": 12.1011,
+      "spread_reduction": 0.9994,
+      "duration_s": 38.69
+    },
+    {
+      "seed": 2027,
+      "agent_accuracy": 0.8706666666666667,
+      "baseline_accuracy": 0.784,
+      "delta": 0.08666666666666667,
+      "spread_baseline": 12.2915,
+      "spread_agent": 12.0748,
+      "spread_reduction": 1.018,
+      "duration_s": 38.97
+    },
+    {
+      "seed": 2718,
+      "agent_accuracy": 0.8853333333333333,
+      "baseline_accuracy": 0.856,
+      "delta": 0.029333333333333322,
+      "spread_baseline": 12.1788,
+      "spread_agent": 12.3298,
+      "spread_reduction": 0.9878,
+      "duration_s": 34.94
+    },
+    {
+      "seed": 3141,
+      "agent_accuracy": 0.8173333333333334,
+      "baseline_accuracy": 0.7786666666666666,
+      "delta": 0.03866666666666674,
+      "spread_baseline": 12.4519,
+      "spread_agent": 12.2028,
+      "spread_reduction": 1.0204,
+      "duration_s": 40.78
+    },
+    {
+      "seed": 4096,
+      "agent_accuracy": 0.716,
+      "baseline_accuracy": 0.5706666666666667,
+      "delta": 0.14533333333333331,
+      "spread_baseline": 12.2075,
+      "spread_agent": 12.0331,
+      "spread_reduction": 1.0145,
+      "duration_s": 42.02
+    },
+    {
+      "seed": 9001,
+      "agent_accuracy": 0.7706666666666667,
+      "baseline_accuracy": 0.66,
+      "delta": 0.11066666666666669,
+      "spread_baseline": 12.327,
+      "spread_agent": 11.9799,
+      "spread_reduction": 1.029,
+      "duration_s": 39.25
+    },
+    {
+      "seed": 9999,
+      "agent_accuracy": 0.8853333333333333,
+      "baseline_accuracy": 0.836,
+      "delta": 0.04933333333333334,
+      "spread_baseline": 12.2452,
+      "spread_agent": 12.1417,
+      "spread_reduction": 1.0085,
+      "duration_s": 38.0
+    }
+  ],
+  "aggregated": {
+    "mean_delta": 0.053200000000000004,
+    "min_delta": 0.010666666666666713,
+    "mean_spread": 1.01259,
+    "min_spread": 0.9878,
+    "seeds": [
+      7,
+      13,
+      31,
+      42,
+      97,
+      101,
+      202,
+      211,
+      303,
+      404,
+      503,
+      777,
+      1009,
+      1337,
+      2027,
+      2718,
+      3141,
+      4096,
+      9001,
+      9999
+    ],
+    "n_seeds": 20
+  },
+  "score": {
+    "retrieval_pts": 70.0,
+    "anisotropy_pts": 0.05,
+    "code_quality_pts": "(manual, up to 10)",
+    "total_automated": 70.05,
+    "max_automated": 90.0
+  }
+}

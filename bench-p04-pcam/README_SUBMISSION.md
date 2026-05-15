@@ -65,7 +65,7 @@ Full official `self_check.py`:
 - Min delta accuracy: `+0.021`
 - Mean spread reduction: `1.02x`
 - Min spread reduction: `1.01x`
-- Automated score: `70.16 / 90`
+- Automated score: `70.13 / 90`
 
 12-seed robustness run:
 

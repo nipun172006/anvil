@@ -275,6 +275,18 @@ Stable baseline commit:
 - Sum of per-seed measured durations: `754.5s`
 - Mean per-seed duration: `37.7s`
 
+Optional `TOPK_K=16` full 20-seed validation:
+
+- JSON saved in `results/adaptive_20_seed_k16_report.json`.
+- Summary saved in `results/adaptive_20_seed_k16_summary.md`.
+- Mean delta `+0.053`
+- Min delta `+0.011`
+- Mean spread ratio `1.01x`
+- Min spread ratio `0.99x`
+- Negative-delta seeds: `0`
+- Spread `<= 1.0x` seeds: `3`
+- Decision: keep default `TOPK_K=12`.
+
 Gate decision:
 
 - The 20-seed gate passed.

@@ -52,7 +52,7 @@ Full default `self_check.py`:
 - Min delta accuracy: `+0.021`
 - Mean spread reduction: `1.02x`
 - Min spread reduction: `1.01x`
-- Automated score: `70.16 / 90`
+- Automated score: `70.13 / 90`
 
 Many-seed official `run.py` over 12 seeds:
 
@@ -75,7 +75,7 @@ Many-seed official `run.py` over 12 seeds:
 Top-k robustness sweep:
 
 - A bounded one-factor sweep found `k=16` had slightly higher mean delta than `k=12` on a reduced-query 12-seed run.
-- Default remains `k=12` because it is the configuration validated by the full 20-seed stress test, and the sweep gain was small.
+- Full 20-seed validation with `TOPK_K=16` improved retrieval but produced 3 spread-gate failures, so default remains `k=12`.
 
 ## Runtime
 

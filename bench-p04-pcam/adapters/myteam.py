@@ -56,9 +56,9 @@ class Engine(Adapter):
         self.N = int(self.X.shape[1])
         self.model_params = model_params or {}
         self.mode = os.environ.get("AGENT_MODE", DEFAULT_MODE).strip().lower()
-        agent_cls = AGENT_CLASSES.get(self.mode, HybridPrecisionAgent)
         if self.mode not in AGENT_CLASSES:
             self.mode = DEFAULT_MODE
+        agent_cls = AGENT_CLASSES.get(self.mode, AdaptiveTopKSpreadAgent)
         try:
             self.agent = agent_cls(self.X, self.model_params)
         except Exception:

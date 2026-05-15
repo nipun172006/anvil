@@ -36,7 +36,7 @@ class AdaptiveTopKSpreadAgent:
             distance="euclidean",
         )
         self.spread = SpreadOptimizedGeometryAgent(self.X, self.model_params)
-        self.distance_threshold = _env_float("CLEAN_DISTANCE_THRESHOLD", 0.35)
+        self.distance_threshold = _env_float("CLEAN_DISTANCE_THRESHOLD", 0.20)
         self.cosine_threshold = _env_float("CLEAN_COSINE_THRESHOLD", 0.98)
         self.detect_mode = os.environ.get("CLEAN_DETECT_MODE", "distance").strip().lower()
         if self.detect_mode not in {"distance", "cosine", "either"}:
