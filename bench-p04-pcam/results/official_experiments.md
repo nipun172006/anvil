@@ -253,3 +253,42 @@ Runtime notes:
 - Full 5-seed self-check wall time: `192.7s`.
 - 12-seed run report sum of per-seed durations: `436.8s`, mean `36.4s` per seed.
 - `SPREAD_OPT_BUDGET=500` appears too slow for little/no rounded metric gain on the public quick sweep.
+
+## 2026-05-15 Final Robustness And Submission Prep
+
+Stable baseline commit:
+
+- Commit: `fe86d32`
+- Message: `stable adaptive topk spread baseline`
+
+20-seed official stress test:
+
+- JSON saved in `results/adaptive_20_seed_report.json`.
+- Summary saved in `results/adaptive_20_seed_summary.md`.
+- Mean delta `+0.048`
+- Min delta `+0.005`
+- Mean spread ratio `1.02x`
+- Min spread ratio `1.01x`
+- Negative-delta seeds: `0`
+- Spread `<= 1.0x` seeds: `0`
+- Automated score `66.98 / 90`
+- Sum of per-seed measured durations: `754.5s`
+- Mean per-seed duration: `37.7s`
+
+Gate decision:
+
+- The 20-seed gate passed.
+- No controlled robustness rescue sweep was needed.
+
+Bounded adaptive top-k robustness sweep:
+
+- Full table saved in `results/adaptive_topk_robust_sweep.md`.
+- Sweep was one-factor around current defaults using the requested 12-seed set and reduced query count.
+- All tested configs had `0` negative-delta seeds and `0` spread failures.
+- `k=16` improved reduced-sweep mean delta to `+0.037` versus current `k=12` at `+0.033`, with same rounded min delta and spread.
+- Default was not changed because the improvement is small and `k=12` is the setting validated by the full 20-seed stress run.
+
+Submission notes:
+
+- Drafted `README_SUBMISSION.md`.
+- No official evaluator/model/harness files modified.

@@ -63,11 +63,26 @@ Many-seed official `run.py` over 12 seeds:
 - Negative-delta seeds: `0`
 - Spread `<= 1.0x` seeds: `0`
 
+20-seed official `run.py` stress test:
+
+- Mean delta accuracy: `+0.048`
+- Min delta accuracy: `+0.005`
+- Mean spread reduction: `1.02x`
+- Min spread reduction: `1.01x`
+- Negative-delta seeds: `0`
+- Spread `<= 1.0x` seeds: `0`
+
+Top-k robustness sweep:
+
+- A bounded one-factor sweep found `k=16` had slightly higher mean delta than `k=12` on a reduced-query 12-seed run.
+- Default remains `k=12` because it is the configuration validated by the full 20-seed stress test, and the sweep gain was small.
+
 ## Runtime
 
 - Engine initialization, `K=16`, `N=64`, default budget `80`: about `0.57s` per seed.
 - Engine initialization with `SPREAD_OPT_BUDGET=500`: about `3.49s` per seed.
 - Full 5-seed `self_check.py`: about `192.7s`.
 - 12-seed official `run.py`: sum of per-seed measured durations `436.8s`, mean `36.4s` per seed.
+- 20-seed official `run.py`: sum of per-seed measured durations `754.5s`, mean `37.7s` per seed, max `43.2s`.
 
 Budget `500` is probably unnecessary for the current public benchmark: it is roughly six times slower at initialization and did not improve rounded quick metrics over much smaller budgets.
