@@ -1,0 +1,177 @@
+{
+  "config": {
+    "K": 16,
+    "N": 64,
+    "noise_levels": [
+      0.5,
+      0.7,
+      0.8
+    ],
+    "n_per_level": 250,
+    "n_aniso": 16,
+    "seeds": [
+      7,
+      13,
+      31,
+      42,
+      97,
+      101,
+      211,
+      503,
+      1009,
+      2027,
+      3141,
+      9999
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 7,
+      "agent_accuracy": 0.7573333333333333,
+      "baseline_accuracy": 0.752,
+      "delta": 0.005333333333333301,
+      "spread_baseline": 12.2118,
+      "spread_agent": 11.9945,
+      "spread_reduction": 1.0181,
+      "duration_s": 38.44
+    },
+    {
+      "seed": 13,
+      "agent_accuracy": 0.892,
+      "baseline_accuracy": 0.8693333333333333,
+      "delta": 0.022666666666666724,
+      "spread_baseline": 12.1063,
+      "spread_agent": 11.7979,
+      "spread_reduction": 1.0261,
+      "duration_s": 32.66
+    },
+    {
+      "seed": 31,
+      "agent_accuracy": 0.8213333333333334,
+      "baseline_accuracy": 0.7693333333333333,
+      "delta": 0.052000000000000046,
+      "spread_baseline": 12.2617,
+      "spread_agent": 12.0715,
+      "spread_reduction": 1.0158,
+      "duration_s": 39.22
+    },
+    {
+      "seed": 42,
+      "agent_accuracy": 0.8946666666666667,
+      "baseline_accuracy": 0.8733333333333333,
+      "delta": 0.021333333333333426,
+      "spread_baseline": 12.1652,
+      "spread_agent": 12.0137,
+      "spread_reduction": 1.0126,
+      "duration_s": 31.77
+    },
+    {
+      "seed": 97,
+      "agent_accuracy": 0.8426666666666667,
+      "baseline_accuracy": 0.8293333333333334,
+      "delta": 0.013333333333333308,
+      "spread_baseline": 12.5555,
+      "spread_agent": 12.1791,
+      "spread_reduction": 1.0309,
+      "duration_s": 33.42
+    },
+    {
+      "seed": 101,
+      "agent_accuracy": 0.836,
+      "baseline_accuracy": 0.788,
+      "delta": 0.04799999999999993,
+      "spread_baseline": 12.3149,
+      "spread_agent": 12.0846,
+      "spread_reduction": 1.0191,
+      "duration_s": 37.23
+    },
+    {
+      "seed": 211,
+      "agent_accuracy": 0.892,
+      "baseline_accuracy": 0.8613333333333333,
+      "delta": 0.03066666666666673,
+      "spread_baseline": 12.4421,
+      "spread_agent": 12.2577,
+      "spread_reduction": 1.015,
+      "duration_s": 35.64
+    },
+    {
+      "seed": 503,
+      "agent_accuracy": 0.8893333333333333,
+      "baseline_accuracy": 0.8706666666666667,
+      "delta": 0.01866666666666661,
+      "spread_baseline": 12.3034,
+      "spread_agent": 12.1418,
+      "spread_reduction": 1.0133,
+      "duration_s": 34.24
+    },
+    {
+      "seed": 1009,
+      "agent_accuracy": 0.8533333333333334,
+      "baseline_accuracy": 0.82,
+      "delta": 0.03333333333333344,
+      "spread_baseline": 12.4859,
+      "spread_agent": 12.2135,
+      "spread_reduction": 1.0223,
+      "duration_s": 36.17
+    },
+    {
+      "seed": 2027,
+      "agent_accuracy": 0.8613333333333333,
+      "baseline_accuracy": 0.784,
+      "delta": 0.07733333333333325,
+      "spread_baseline": 12.2915,
+      "spread_agent": 12.0748,
+      "spread_reduction": 1.018,
+      "duration_s": 39.03
+    },
+    {
+      "seed": 3141,
+      "agent_accuracy": 0.8106666666666666,
+      "baseline_accuracy": 0.7786666666666666,
+      "delta": 0.03200000000000003,
+      "spread_baseline": 12.4519,
+      "spread_agent": 12.2028,
+      "spread_reduction": 1.0204,
+      "duration_s": 41.08
+    },
+    {
+      "seed": 9999,
+      "agent_accuracy": 0.8773333333333333,
+      "baseline_accuracy": 0.836,
+      "delta": 0.04133333333333333,
+      "spread_baseline": 12.2452,
+      "spread_agent": 12.1417,
+      "spread_reduction": 1.0085,
+      "duration_s": 37.87
+    }
+  ],
+  "aggregated": {
+    "mean_delta": 0.03300000000000001,
+    "min_delta": 0.005333333333333301,
+    "mean_spread": 1.0183416666666667,
+    "min_spread": 1.0085,
+    "seeds": [
+      7,
+      13,
+      31,
+      42,
+      97,
+      101,
+      211,
+      503,
+      1009,
+      2027,
+      3141,
+      9999
+    ],
+    "n_seeds": 12
+  },
+  "score": {
+    "retrieval_pts": 46.2,
+    "anisotropy_pts": 0.16,
+    "code_quality_pts": "(manual, up to 10)",
+    "total_automated": 46.36,
+    "max_automated": 90.0
+  }
+}
