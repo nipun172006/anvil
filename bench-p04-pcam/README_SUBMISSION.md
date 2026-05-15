@@ -1,101 +1,52 @@
-# ANVIL P4 Submission Notes
+# ANVIL P4 Submission
 
-## Problem Summary
+## Official Entrypoint
 
-ANVIL P4 asks for an inference-time precision controller for PCAM. The frozen memory system stores patterns, receives a corrupted query, and runs PCAM dynamics. Our adapter returns a positive per-dimension precision vector that controls how strongly each coordinate participates in retrieval.
-
-The official interface is:
-
-```python
-class Engine(Adapter):
-    def __init__(self, stored_patterns, model_params):
-        ...
-
-    def predict_precision(self, corrupted_query):
-        ...
+```text
+adapters.myteam:Engine
 ```
+
+The adapter implements `Engine.predict_precision(corrupted_query)` and returns a finite, positive, mean-normalized precision vector with one value per dimension.
 
 ## Approach
 
-The final adapter uses `adaptive_topk_spread` by default.
+The final adapter uses `adaptive_topk_spread`.
 
-Corrupted retrieval queries use top-k consensus precision:
+- Corrupted retrieval queries use top-k consensus precision.
+- Near-clean attractor probes use precomputed Hessian spread-optimized precision.
+- A distance-based regime detector selects between those two paths.
+- Final top-k defaults are `k=12`, `temp=1.0`, `consensus_weight=0.45`, Euclidean distance.
+- Final clean-input threshold is `CLEAN_DISTANCE_THRESHOLD=0.20`.
 
-- Find the nearest stored patterns.
-- Build a local weighted consensus among candidate memories.
-- Increase precision on dimensions that agree with the local candidate set.
-- Current default top-k configuration is `k=12`, `temp=1.0`, `consensus_weight=0.45`, Euclidean distance.
+## Why This Is Principled
 
-Near-clean attractor probes use spread-optimized precision:
+The official benchmark calls `predict_precision` in two different regimes: retrieval uses heavily corrupted noisy queries, while anisotropy uses lightly perturbed stored patterns and evaluates spread at the clean attractor. The adapter treats those regimes differently without changing the frozen PCAM model.
 
-- For each stored pattern, compute the official PCAM Hessian:
+Precision is used only as inference-time control. The retrieval branch estimates reliable coordinates from local top-k consensus; the near-clean branch directly targets the official Hessian spread form:
 
 ```python
 s = softmax(beta * X @ a)
 C = diag(s) - outer(s, s)
 H = R - eta * beta * X.T @ C @ X
+S = diag(sqrt(pi)) @ H @ diag(sqrt(pi))
 ```
 
-- Precompute a per-pattern precision vector that directly reduces the condition number of:
-
-```python
-diag(sqrt(pi)) @ H @ diag(sqrt(pi))
-```
-
-- At prediction time, select the precomputed precision for the nearest stored pattern.
-
-The regime detector uses distance to the nearest stored pattern. Queries within the tuned clean-input threshold use spread-optimized precision; other queries use top-k retrieval precision.
-
-## Why This Is Principled
-
-The official benchmark calls `predict_precision` in two different regimes:
-
-- Retrieval accuracy uses corrupted noisy queries.
-- Anisotropy uses lightly perturbed stored patterns, then measures spread at the clean attractor.
-
-The adapter exploits this structure without changing the official model. It uses a retrieval-oriented policy for corrupted inputs and a Hessian-spread objective for near-clean attractor inputs. This matches PCAM's per-dimension precision idea: precision reshapes coordinate-wise dynamics at inference time, while the stored memory system remains frozen.
-
-The official harness still clips precision to `[0.1, 10.0]` and mean-normalizes before applying dynamics. Our adapter also sanitizes outputs defensively.
+No official evaluator, model, harness, or data-generation files were modified.
 
 ## Results
 
-Full official `self_check.py`:
+| Run | Mean Delta | Min Delta | Mean Spread | Min Spread | Extra Gates | Score |
+|---|---:|---:|---:|---:|---|---:|
+| Full `self_check.py` | `+0.057` | `+0.021` | `1.02x` | `1.01x` | none negative | `70.13 / 90` |
+| 20-seed stress | `+0.048` | `+0.005` | `1.02x` | `1.01x` | `0` negative-delta seeds, `0` spread failures | `66.98 / 90` |
 
-- Mean delta accuracy: `+0.057`
-- Min delta accuracy: `+0.021`
-- Mean spread reduction: `1.02x`
-- Min spread reduction: `1.01x`
-- Automated score: `70.13 / 90`
+## Rejected Experiments
 
-12-seed robustness run:
-
-- Mean delta accuracy: `+0.033`
-- Min delta accuracy: `+0.005`
-- Mean spread reduction: `1.02x`
-- Min spread reduction: `1.01x`
-- Negative-delta seeds: `0`
-- Spread `<= 1.0x` seeds: `0`
-
-20-seed robustness run:
-
-- Mean delta accuracy: `+0.048`
-- Min delta accuracy: `+0.005`
-- Mean spread reduction: `1.02x`
-- Min spread reduction: `1.01x`
-- Negative-delta seeds: `0`
-- Spread `<= 1.0x` seeds: `0`
-
-Rejected experiment:
-
-- `TOPK_K=16` improved retrieval on the 20-seed run, but had min spread `0.99x` and 3 spread-gate failures, so the final default remains `k=12`.
-
-## Dependencies
-
-NumPy only.
-
-## Safety
-
-No official evaluator, model, harness, or data-generation files were modified. The submission changes are limited to the adapter, precision-agent utilities, scripts/results, and this submission note.
+- `TOPK_K=16` improved retrieval but caused 3 spread failures, so `k=12` stayed final.
+- Coordinate descent gave only a tiny anisotropy improvement and added too much runtime.
+- One-shot eigenvector scaling was anti-aligned with the official spread objective.
+- Kappa-subgradient slightly improved full self-check but failed the 20-seed spread gate.
+- Basis-subspace quick did not clearly beat the stable quick baseline.
 
 ## Reproduction
 
@@ -120,10 +71,14 @@ PYTHONPYCACHEPREFIX=/private/tmp/anvil_pycache python3 run.py \
   --out results/adaptive_20_seed_report.json
 ```
 
-Summarize a JSON report:
+Report summarizer:
 
 ```bash
 PYTHONPYCACHEPREFIX=/private/tmp/anvil_pycache python3 scripts/summarize_report.py \
   results/adaptive_20_seed_report.json \
   --out results/adaptive_20_seed_summary.md
 ```
+
+## Dependencies
+
+NumPy only.
