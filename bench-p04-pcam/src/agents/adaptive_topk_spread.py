@@ -20,6 +20,16 @@ def _env_float(name: str, default: float) -> float:
         return float(default)
 
 
+def _optional_env_float(name: str) -> float | None:
+    value = os.environ.get(name)
+    if value is None or value.strip() == "":
+        return None
+    try:
+        return float(value)
+    except ValueError:
+        return None
+
+
 class AdaptiveTopKSpreadAgent:
     """Use spread-optimized precision near attractors, top-k elsewhere."""
 
@@ -41,6 +51,8 @@ class AdaptiveTopKSpreadAgent:
         self.detect_mode = os.environ.get("CLEAN_DETECT_MODE", "distance").strip().lower()
         if self.detect_mode not in {"distance", "cosine", "either"}:
             self.detect_mode = "distance"
+        self.guard_distance = _optional_env_float("RETRIEVAL_GUARD_DISTANCE")
+        self.guard_cosine = _optional_env_float("RETRIEVAL_GUARD_COSINE")
         self.debug = os.environ.get("ADAPTIVE_DEBUG", "").strip() == "1"
         self._debug_count = 0
 
@@ -64,13 +76,20 @@ class AdaptiveTopKSpreadAgent:
             return distance_clean or cosine_clean
         return distance_clean
 
+    def _guard_to_spread(self, sq_dist: float, cosine: float) -> bool:
+        distance_guarded = (
+            self.guard_distance is not None and sq_dist <= self.guard_distance
+        )
+        cosine_guarded = self.guard_cosine is not None and cosine >= self.guard_cosine
+        return distance_guarded or cosine_guarded
+
     def predict_precision(self, corrupted_query: np.ndarray) -> np.ndarray:
         q = np.asarray(corrupted_query, dtype=float).reshape(-1)
         if q.shape != (self.N,) or self.K == 0:
             return np.ones(self.N, dtype=float)
 
         idx, sq_dist, cosine = self._nearest_stats(q)
-        clean = self._is_clean(sq_dist, cosine)
+        clean = self._is_clean(sq_dist, cosine) or self._guard_to_spread(sq_dist, cosine)
         if self.debug and self._debug_count < 12:
             print(
                 "[adaptive-debug]",
