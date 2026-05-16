@@ -10,21 +10,28 @@ The adapter implements `Engine.predict_precision(corrupted_query)` and returns a
 
 ## Approach
 
-The final adapter uses `adaptive_topk_spread`.
+The final adapter is a PCAM flow-margin precision controller.
 
-- Corrupted retrieval queries use guarded adaptive-margin top-k precision.
-- Ambiguous or noisy retrieval queries use `k=16` and `temp=1.2`.
-- Near-clean attractor probes use precomputed Hessian spread-optimized precision.
-- A distance-based regime detector selects between those two paths.
-- `CLEAN_DISTANCE_THRESHOLD=0.30` protects anisotropy probes by routing near-clean inputs to the spread branch.
+- Corrupted retrieval queries use a reliability-weighted target predictor: coordinates with larger `|q_j|` are treated as more trustworthy under the mask-plus-noise corruption process.
+- The adapter computes the frozen PCAM local gradient and shapes precision along dimensions that improve the target-vs-competitor flow margin.
+- If the weighted classifier is too uncertain, the adapter safely returns identity precision rather than oversteering.
+- Near-clean attractor probes use a guarded Hessian geometry branch for anisotropy.
+- Geometry precision is accepted only when it reduces the local spread of `sqrt(Pi) H sqrt(Pi)`; otherwise it falls back to identity precision.
 
-Error analysis showed the hardest retrieval cases correlate with high noise and small nearest-neighbor margins. Guarded adaptive retrieval improves those cases while preserving the spread branch.
+The implementation is deterministic by default, NumPy-only, and does not retrain or modify the frozen PCAM model.
 
 ## Why This Is Principled
 
 The official benchmark calls `predict_precision` in two different regimes: retrieval uses heavily corrupted noisy queries, while anisotropy uses lightly perturbed stored patterns and evaluates spread at the clean attractor. The adapter treats those regimes differently without changing the frozen PCAM model.
 
-Precision is used only as inference-time control. The retrieval branch estimates reliable coordinates from local top-k consensus; the near-clean branch directly targets the official Hessian spread form:
+Precision is used only as inference-time control. For retrieval, the adapter uses the PCAM descent direction:
+
+```python
+grad = R @ q - eta * X.T @ softmax(beta * X @ q)
+descent = -grad
+```
+
+It increases precision where the descent improves the margin between the predicted target and nearby competitors. For near-clean probes, the geometry branch directly targets the official Hessian spread form:
 
 ```python
 s = softmax(beta * X @ a)
@@ -39,16 +46,17 @@ No official evaluator, model, harness, or data-generation files were modified.
 
 | Run | Mean Delta | Min Delta | Mean Spread | Min Spread | Extra Gates | Score |
 |---|---:|---:|---:|---:|---|---:|
-| Full `self_check.py` | `+0.064` | `+0.023` | `1.02x` | `1.01x` | retrieval `70 / 70` | `70.16 / 90` |
-| 20-seed stress | `+0.055` | `+0.011` | `1.02x` | `1.01x` | `0` negative-delta seeds, `0` spread failures | `70.15 / 90` |
+| Quick `self_check.py --quick` | `+0.115` | `+0.080` | `1.02x` | `1.02x` | retrieval `70 / 70` | `70.20 / 90` |
+| Full `self_check.py` | `+0.110` | `+0.063` | `1.03x` | `1.02x` | retrieval `70 / 70` | `70.22 / 90` |
+| 20-seed stress | `+0.101` | `+0.053` | `1.03x` | `1.02x` | `0` negative-delta seeds, `0` spread failures | `70.22 / 90` |
+| 40-seed stress | `+0.096` | `+0.053` | `1.03x` | `1.02x` | `0` negative-delta seeds, `0` spread failures | `70.22 / 90` |
 
-## Rejected Experiments
+## Earlier Experiments
 
-- `TOPK_K=16` improved retrieval but caused 3 spread failures before the clean guard was strengthened.
-- Coordinate descent gave only a tiny anisotropy improvement and added too much runtime.
+- Top-k consensus precision was robust but left retrieval headroom.
+- Guarded adaptive top-k improved retrieval while preserving anisotropy, but the flow-margin controller is stronger on the same official harness.
+- Coordinate descent and kappa-subgradient geometry variants gave small anisotropy gains but were not worth the robustness/runtime tradeoff.
 - One-shot eigenvector scaling was anti-aligned with the official spread objective.
-- Kappa-subgradient slightly improved full self-check but failed the 20-seed spread gate.
-- Basis-subspace quick did not clearly beat the stable quick baseline.
 
 ## Reproduction
 
@@ -70,15 +78,24 @@ PYTHONPYCACHEPREFIX=/private/tmp/anvil_pycache python3 self_check.py --adapter a
 PYTHONPYCACHEPREFIX=/private/tmp/anvil_pycache python3 run.py \
   --adapter adapters.myteam:Engine \
   --seeds 7 13 31 42 97 101 202 211 303 404 503 777 1009 1337 2027 2718 3141 4096 9001 9999 \
-  --out results/final_guarded_20_seed_report.json
+  --out results/ported_friend_20_seed_report.json
 ```
 
 Report summarizer:
 
 ```bash
 PYTHONPYCACHEPREFIX=/private/tmp/anvil_pycache python3 scripts/summarize_report.py \
-  results/final_guarded_20_seed_report.json \
-  --out results/final_guarded_20_seed_summary.md
+  results/ported_friend_20_seed_report.json \
+  --out results/ported_friend_20_seed_summary.md
+```
+
+40-seed stress run:
+
+```bash
+PYTHONPYCACHEPREFIX=/private/tmp/anvil_pycache python3 run.py \
+  --adapter adapters.myteam:Engine \
+  --seeds 7 13 31 42 97 101 202 211 303 404 503 777 1009 1337 2027 2718 3141 4096 9001 9999 123 456 789 1111 2222 3333 4444 5555 6666 7777 8888 1212 2323 3434 4545 5656 6767 7878 8989 9090 \
+  --out results/ported_friend_40_seed_report.json
 ```
 
 ## Dependencies
